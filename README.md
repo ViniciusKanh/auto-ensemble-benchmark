@@ -1,337 +1,225 @@
-# 📦 Auto-Ensemble-Benchmark  
-### 🔥 Benchmark automático de modelos *ensemble* com métricas completas, ranking e validação cruzada
+# 📦 Auto-Ensemble-Benchmark
+
+### 🔬 Benchmark automático de modelos *ensemble* para classificação — métricas padronizadas, ranking e validação cruzada
 
 <p align="center">
-  <img src="https://img.shields.io/badge/status-0.1.0-4ade80?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/python-3.9+-3776ab?style=for-the-badge&logo=python&logoColor=white" />
-  <img src="https://img.shields.io/badge/scikit--learn-ML-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white" />
-  <img src="https://img.shields.io/badge/license-MIT-22c55e?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/version-0.1.1-4ade80?style=for-the-badge" alt="version" />
+  <img src="https://img.shields.io/badge/python-3.9%2B-3776ab?style=for-the-badge&logo=python&logoColor=white" alt="python" />
+  <img src="https://img.shields.io/badge/license-MIT-22c55e?style=for-the-badge" alt="license" />
 </p>
 
 ---
 
-## 🌟 Visão Geral
+## Sumário
 
-`auto-ensemble-benchmark` é uma biblioteca em Python para **comparar automaticamente múltiplos modelos ensemble de classificação**, calculando métricas padronizadas e organizando os resultados em **tabelas claras, ordenadas e interpretáveis**.
+1. [Visão geral](#vis%C3%A3o-geral)
+2. [Instalação](#instala%C3%A7%C3%A3o)
+3. [Exemplos de uso](#exemplos-de-uso)
 
-Ela foi pensada para:
-
-- 💡 **Pesquisadores** que precisam comparar rapidamente ensembles em diferentes bases.  
-- 🧪 **Data Scientists** que querem um benchmark rápido de modelos baselines.  
-- 📊 **Estudos acadêmicos** que requerem métricas reprodutíveis e relatórios consistentes.  
-
-Com poucas linhas de código, você consegue:
-
-- Treinar vários ensembles de uma vez (RandomForest, ExtraTrees, GradientBoosting, AdaBoost, Bagging com RF).  
-- Obter uma tabela com:
-
-  - `accuracy`  
-  - `f1`  
-  - `recall`  
-  - `precision`  
-  - Ranking por métrica (`rank_<métrica>`)  
-  - Ranking global (`overall_rank`)
-
-- Rodar **validação cruzada (k-fold)** e obter média/desvio-padrão das métricas.  
-- Salvar tudo em **CSV**, organizado por experimento.
+   * [Exemplo rápido (hold-out)](#exemplo-r%C3%A1pido-hold-out)
+   * [Validação cruzada (CV)](#valida%C3%A7%C3%A3o-cruzada-cv)
+4. [Explicação dos resultados e formato dos arquivos](#explica%C3%A7%C3%A3o-dos-resultados-e-formato-dos-arquivos)
+5. [Interpretação metodológica e recomendações](#interpreta%C3%A7%C3%A3o-metodol%C3%B3gica-e-recomenda%C3%A7%C3%B5es)
+6. [API — referência sucinta](#api---refer%C3%AAncia-sucinta)
+7. [Roadmap](#roadmap)
+8. [Contribuição](#contribui%C3%A7%C3%A3o)
+9. [Licença](#licen%C3%A7a)
+10. [Sobre o autor](#sobre-o-autor)
+11. [Changelog curto](#changelog-curto)
 
 ---
 
-## 🧩 Principais Recursos
+## Visão geral
 
-- 🔁 **Ensembles prontos para uso**
-  - `RandomForestClassifier`
-  - `ExtraTreesClassifier`
-  - `GradientBoostingClassifier`
-  - `AdaBoostClassifier`
-  - `BaggingClassifier` com base em RandomForest
+`auto-ensemble-benchmark` é uma biblioteca Python projetada para automatizar a comparação de classificadores *ensemble* por meio de métricas padronizadas, rankings por métrica, ranking agregado e validação cruzada. O objetivo é proporcionar um fluxo reprodutível e científico para:
 
-- 📊 **Métricas já calculadas**
-  - `accuracy`
-  - `f1`
-  - `recall`
-  - `precision`
+* Treinar e avaliar múltiplos ensembles baseline (RandomForest, ExtraTrees, GradientBoosting, AdaBoost, Bagging com RF).
+* Calcular métricas padrão (accuracy, f1, recall, precision) com suporte a médias para problemas multiclasse/binário.
+* Gerar colunas de ranking por métrica e um `overall_rank` agregador.
+* Executar validação cruzada estratificada retornando média e desvio-padrão.
+* Persistir resultados em CSV para documentação experimental e relatórios científicos.
 
-- 🏆 **Ranking automático**
-  - Ranking por métrica: `rank_accuracy`, `rank_f1`, etc.
-  - Ranking global: `overall_rank` (soma das posições, menor = melhor).
-
-- 🎯 **Métrica principal configurável**
-  - `primary_metric="accuracy"` (padrão) ou `"f1"`, `"recall"`, `"precision"`.
-
-- 🔧 **Customização de hiperparâmetros**
-  - Via `model_overrides={"RandomForest": {"n_estimators": 500}, ...}` sem precisar recriar tudo na mão.
-
-- 📂 **Persistência de resultados**
-  - Define pasta (`output_dir`) e nome de experimento (`experiment_name`).
-  - Salva automaticamente:
-    - Resultados de hold-out
-    - Resultados de validação cruzada
-  - Formato CSV, pronto para análise posterior / relatórios.
-
-- 🧪 **Validação cruzada integrada**
-  - `fit_evaluate_cv(X, y, cv=5, ...)`  
-  - Retorna métricas `_mean` e `_std` para cada modelo.
+Aplicações típicas: pesquisa acadêmica (benchmarks reprodutíveis), avaliação de baselines por cientistas de dados, provas de conceito rápidas em conjuntos de dados variados.
 
 ---
 
-## 📦 Instalação
+## Instalação
 
-### 1️⃣ Clonar o repositório
+### Via PyPI (recomendado)
+
+```bash
+pip install auto-ensemble-benchmark
+```
+
+> Observação: a versão publicada atualmente é `0.1.1`. Use `pip install --upgrade auto-ensemble-benchmark` para atualizar.
+
+### Modo desenvolvimento (instalação local)
 
 ```bash
 git clone https://github.com/ViniciusKanh/auto-ensemble-benchmark.git
 cd auto-ensemble-benchmark
-````
 
-### 2️⃣ Criar e ativar ambiente virtual (recomendado)
-
-```bash
+# criar ambiente virtual (exemplo)
 python -m venv .venv
 
 # Windows
 .venv\Scripts\activate
 
-# Linux / macOS
+# macOS / Linux
 source .venv/bin/activate
-```
 
-### 3️⃣ Instalar dependências em modo desenvolvimento
-
-```bash
 pip install -e .
 ```
 
-Isso irá:
-
-* Instalar o pacote `auto-ensemble-benchmark` em modo editável.
-* Permitir que você edite o código e teste sem reinstalar.
-
-> 💡 *Quando (e se) houver publicação no PyPI, a instalação ficará tão simples quanto:*
-> `pip install auto-ensemble-benchmark`
-
 ---
 
-## 🚀 Exemplo Rápido (Wine Dataset)
+## Exemplos de uso
 
-Uso mínimo da biblioteca com o dataset clássico `wine` do scikit-learn:
+> Todos os exemplos assumem importações padrão do `scikit-learn`. Comentários dos trechos de código estão em Português.
+
+### Exemplo rápido — hold-out
 
 ```python
+# Exemplo mínimo: hold-out com dataset wine
 from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split
-
 from auto_ensemble_benchmark import AutoEnsembleClassifier
 
-# 1. Dados
+# Carrega dados
 data = load_wine()
-X = data.data
-y = data.target
+X, y = data.data, data.target
 
+# Particiona treino/teste
 X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y,
-    test_size=0.3,
+    X, y, test_size=0.3, random_state=42, stratify=y
+)
+
+# Instancia o avaliador automático (padrões)
+auto = AutoEnsembleClassifier(
+    primary_metric="accuracy",   # métrica principal para ranking
+    add_rank_columns=True,       # inclui colunas de ranking
     random_state=42,
-    stratify=y,
+    n_jobs=-1
 )
 
-# 2. Instanciar o avaliador automático (modo default)
-auto = AutoEnsembleClassifier()
+# Treina e avalia (treina nos dados de treino e avalia no hold-out)
+df_holdout = auto.fit_evaluate(X_train, y_train, X_test, y_test, media="macro")
 
-# 3. Treinar + avaliar (hold-out)
-resultados_holdout = auto.fit_evaluate(
-    X_train,
-    y_train,
-    X_test,
-    y_test,
-    media="macro",  # média macro para problema multiclasse
-)
+# Resultado: DataFrame com métricas e rankings
+print(df_holdout)
 
-print("Resultados (hold-out):")
-print(resultados_holdout)
-
-# 4. Resumo textual
-print("\nResumo interpretado:")
+# Sumário interpretável
 print(auto.summarize_results(top_k=3))
 ```
 
-Saída típica (resumida):
-
-```text
-Resultados (hold-out):
-                          accuracy        f1    recall  precision  rank_accuracy  rank_f1  ...
-modelo
-RandomForest              1.000000  1.000000  1.000000   1.000000              1        1
-ExtraTrees                1.000000  1.000000  1.000000   1.000000              1        1
-Bagging_RandomForestBase  1.000000  1.000000  1.000000   1.000000              1        1
-AdaBoost                  0.98...   ...
-GradientBoosting          0.96...   ...
-
-Resumo interpretado:
-Melhor modelo (segundo accuracy): RandomForest com accuracy = 1.0000.
-Top modelos (hold-out):
-  1. RandomForest -> ...
-  2. ExtraTrees -> ...
-  3. Bagging_RandomForestBase -> ...
-```
-
----
-
-## ⚙️ Uso com Parâmetros Avançados
-
-Exemplo configurando:
-
-* métrica principal (`primary_metric="f1"`)
-* sobrescrita de hiperparâmetros (`model_overrides`)
-* pasta de saída e nome de experimento
-* salvamento automático em CSV
+### Validação cruzada (CV) — estimativa robusta
 
 ```python
-from sklearn.datasets import load_wine
-from sklearn.model_selection import train_test_split
-
-from auto_ensemble_benchmark import AutoEnsembleClassifier
-
-data = load_wine()
-X = data.data
-y = data.target
-
-X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y,
-    test_size=0.3,
-    random_state=123,
-    stratify=y,
+# Avaliação com validação cruzada estratificada
+df_cv = auto.fit_evaluate_cv(
+    X, y,
+    cv=5,
+    media="macro",
+    random_state_cv=123,
+    shuffle=True
 )
 
+# df_cv contém <metrica>_mean e <metrica>_std para cada modelo
+print(df_cv)
+```
+
+### Uso avançado — sobrescrita de hiperparâmetros e salvamento automático
+
+```python
 auto = AutoEnsembleClassifier(
     metricas=["accuracy", "f1", "recall", "precision"],
-    primary_metric="f1",           # ranking guiado por F1
-    add_rank_columns=True,         # inclui rank_<métrica> e overall_rank
+    primary_metric="f1",
     model_overrides={
         "RandomForest": {"n_estimators": 500, "max_depth": None},
         "ExtraTrees": {"n_estimators": 800},
     },
-    output_dir="resultados_bench",     # pasta para salvar CSVs
-    experiment_name="wine_ensembles",  # prefixo dos arquivos
-    save_on_evaluate=True,            # salva hold-out
-    save_on_cv=True,                  # salva cross-validation
+    output_dir="resultados_bench",
+    experiment_name="exp_v1",
+    save_on_evaluate=True,
+    save_on_cv=True
 )
 
-resultados_holdout = auto.fit_evaluate(
-    X_train,
-    y_train,
-    X_test,
-    y_test,
-    media="macro",
-)
-
-print(resultados_holdout)
-
-resultados_cv = auto.fit_evaluate_cv(
-    X,
-    y,
-    cv=5,
-    media="macro",
-    random_state_cv=123,
-    shuffle=True,
-)
-
-print(resultados_cv)
+df_holdout = auto.fit_evaluate(X_train, y_train, X_test, y_test, media="macro")
+# Arquivos gerados:
+# resultados_bench/exp_v1_holdout_results.csv
+# resultados_bench/exp_v1_cv_results.csv
 ```
-
-Arquivos gerados (exemplo):
-
-* `resultados_bench/wine_ensembles_holdout_results.csv`
-* `resultados_bench/wine_ensembles_cv_results.csv`
 
 ---
 
-## 🧪 Exemplo em Dataset Mais Difícil
+## Explicação dos resultados e formato dos arquivos
 
-Para testar a biblioteca em um cenário mais desafiador, podemos usar `make_classification` com:
+A biblioteca retorna `pandas.DataFrame` com as colunas descritas abaixo. Caso `save_on_*` esteja ativado, gera CSVs contendo as mesmas informações, mais metadados.
 
-* classes desbalanceadas
-* ruído nos rótulos (`flip_y`)
-* separação moderada entre classes
+### Colunas de métricas (hold-out)
 
-```python
-from sklearn.datasets import make_classification
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, classification_report
+* `accuracy` — fração de previsões corretas.
+* `f1` — pontuação F1 (dependente de `media` para problemas multiclasse).
+* `recall` — sensibilidade (TP / (TP + FN)).
+* `precision` — precisão (TP / (TP + FP)).
 
-from auto_ensemble_benchmark import AutoEnsembleClassifier
+> Todas as métricas seguem a API do `scikit-learn`. Use o parâmetro `media` para ajustar o cálculo (`"binary"`, `"macro"`, `"micro"`, `"weighted"`).
 
-# Dataset sintético difícil (binário)
-X, y = make_classification(
-    n_samples=2000,
-    n_features=30,
-    n_informative=10,
-    n_redundant=5,
-    n_clusters_per_class=2,
-    weights=[0.7, 0.3],   # desbalanceado
-    flip_y=0.05,          # 5% de ruído de rótulo
-    class_sep=0.8,        # separação moderada
-    random_state=42,
-)
+### Colunas de ranking
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y,
-    test_size=0.3,
-    random_state=42,
-    stratify=y,
-)
+* `rank_accuracy`, `rank_f1`, `rank_recall`, `rank_precision` — posição ordinal por métrica (1 = melhor).
+* `overall_rank` — soma das posições das métricas consideradas; menor valor indica melhor desempenho agregado.
 
-auto = AutoEnsembleClassifier(
-    metricas=["accuracy", "f1", "recall", "precision"],
-    primary_metric="f1",  # aqui o F1 faz mais sentido como métrica principal
-    add_rank_columns=True,
-)
+**Nota interpretativa:** `overall_rank` é um agregador de ordens e serve como critério sumarizador. Ele não substitui testes estatísticos de significância entre modelos.
 
-resultados_holdout = auto.fit_evaluate(
-    X_train,
-    y_train,
-    X_test,
-    y_test,
-    media="binary",  # problema binário
-)
+### Validação cruzada (CV)
 
-print("Resultados (hold-out) - dataset difícil:")
-print(resultados_holdout)
+Saída de `fit_evaluate_cv` possui colunas:
 
-print("\nResumo interpretado:")
-print(auto.summarize_results(top_k=3))
+* `<metrica>_mean` — média da métrica nas folds.
+* `<metrica>_std` — desvio-padrão entre folds (medida de estabilidade).
 
-# Inspecionar o melhor modelo em detalhes
-best_model = auto.best_model_
+Use `*_std` para examinar robustez: elevado desvio indica sensibilidade a particionamentos.
 
-if best_model is not None:
-    y_pred = best_model.predict(X_test)
+### Arquivos gerados
 
-    print("\nMatriz de confusão (melhor modelo):")
-    print(confusion_matrix(y_test, y_pred))
+* `{output_dir}/{experiment_name}_holdout_results.csv` — resultados do hold-out.
+* `{output_dir}/{experiment_name}_cv_results.csv` — resultados da validação cruzada.
 
-    print("\nClassification report (melhor modelo):")
-    print(classification_report(y_test, y_pred, digits=4))
-```
-
-Aqui você verá métricas mais realistas (por exemplo, accuracy ~0.85, f1 ~0.74) e diferenças claras entre os ensembles.
+Os CSVs incluem colunas: `modelo`, métricas, colunas de ranking, parâmetros aplicados (se sobrescritos), timestamp de execução.
 
 ---
 
-## 📚 API – Referência Rápida
+## Interpretação metodológica e recomendações
 
-### `AutoEnsembleClassifier`
+1. **Seleção da métrica principal (`primary_metric`)**
+
+   * Para dados desbalanceados, priorize `f1` (ou `recall`/`precision` conforme custo de falsos negativos/positivos).
+   * Para problemas multiclasse, utilize `media="macro"` e prefira `f1` como métrica agregada.
+
+2. **Hold-out vs CV**
+
+   * Hold-out é adequado para inspeção e diagnóstico rápidos.
+   * Validação cruzada fornece estimativas mais estáveis e deve ser usada para relatórios científicos ou quando o conjunto de dados é pequeno.
+
+3. **Estabilidade vs desempenho pontual**
+
+   * Compare `*_mean` com `*_std` na CV. Um modelo com média ligeiramente inferior, mas menor desvio, pode ser preferível pela maior robustez.
+
+4. **Comparações estatísticas**
+
+   * Ao comparar top-k modelos, realize testes pareados (ex.: Wilcoxon, t-test pareado dependendo da normalidade) sobre as métricas nas folds. Use correção para múltiplos testes quando necessário.
+
+5. **Reprodutibilidade**
+
+   * Defina `random_state` e `random_state_cv` quando for reportar resultados; versione scripts e CSVs de saída para rastreabilidade.
+
+---
+
+## API — referência sucinta
 
 ```python
-from auto_ensemble_benchmark import AutoEnsembleClassifier
-```
-
-#### Construtor
-
-```python
-auto = AutoEnsembleClassifier(
+AutoEnsembleClassifier(
     modelos=None,
     metricas=None,
     primary_metric="accuracy",
@@ -346,236 +234,46 @@ auto = AutoEnsembleClassifier(
 )
 ```
 
-* `modelos` (`dict[str, estimator]`, opcional)
-  Se `None`, usa os modelos padrão do `model_zoo` (RandomForest, ExtraTrees, etc).
-
-* `metricas` (`list[str]`, opcional)
-  Lista de métricas a calcular. Suporta:
-  `["accuracy", "f1", "recall", "precision"]`
-  Se `None`, usa todas.
-
-* `primary_metric` (`str`)
-  Métrica principal usada para:
-
-  * ordenar a tabela de resultados
-  * definir o “melhor modelo” (`best_model_` / `best_model_name_`)
-
-* `add_rank_columns` (`bool`)
-  Se `True`, adiciona colunas `rank_<métrica>` e `overall_rank`.
-
-* `random_state` (`int`)
-  Semente padrão usada na criação dos modelos default.
-
-* `n_jobs` (`int`)
-  Número de núcleos para paralelização (quando suportado pela implementação do modelo).
-
-* `model_overrides` (`dict[str, dict]`, opcional)
-  Sobrescreve hiperparâmetros dos modelos padrões. Exemplo:
-
-  ```python
-  model_overrides = {
-      "RandomForest": {"n_estimators": 500, "max_depth": 10},
-      "ExtraTrees": {"n_estimators": 1000},
-  }
-  ```
-
-* `output_dir` (`str`, opcional)
-  Caminho para pasta onde salvar CSVs com resultados. Se `None`, não salva.
-
-* `experiment_name` (`str`, opcional)
-  Prefixo dos arquivos CSV. Default: `"auto_ensemble_experiment"`.
-
-* `save_on_evaluate` (`bool`)
-  Se `True`, salva resultados de hold-out ao final de `evaluate`/`fit_evaluate`.
-
-* `save_on_cv` (`bool`)
-  Se `True`, salva resultados de `fit_evaluate_cv`.
-
----
-
 ### Métodos principais
 
-#### `fit(X_train, y_train)`
+* `fit(X_train, y_train)` — treina todos os modelos.
+* `evaluate(X_test, y_test, media="auto")` — avalia modelos no conjunto de teste.
+* `fit_evaluate(X_train, y_train, X_test, y_test, media="auto")` — atalho: treina e avalia.
+* `fit_evaluate_cv(X, y, cv=5, media="auto", random_state_cv=42, shuffle=True)` — executa CV estratificada.
+* `get_results()` — retorna `DataFrame` dos últimos resultados hold-out.
+* `get_results_cv()` — retorna `DataFrame` dos últimos resultados de CV.
+* `summarize_results(top_k=3)` — resumo textual dos top-k modelos (métrica principal).
 
-Treina todos os modelos com os dados de treino.
-
-```python
-auto.fit(X_train, y_train)
-```
-
-#### `evaluate(X_test, y_test, media="auto")`
-
-Avalia todos os modelos com dados de teste.
-
-```python
-df_resultados = auto.evaluate(X_test, y_test, media="macro")
-```
-
-* `media`:
-
-  * `"auto"` → detecta binário vs. multiclasse e escolhe `'binary'` ou `'macro'`.
-  * ou qualquer valor aceito pelas métricas do scikit-learn (`"binary"`, `"macro"`, `"micro"`, `"weighted"` etc.).
-
-Retorna `DataFrame` com:
-
-* colunas de métricas (`accuracy`, `f1`, `recall`, `precision`).
-* colunas de ranking (`rank_<métrica>`) se `add_rank_columns=True`.
-* `overall_rank` (soma dos ranks).
-
-#### `fit_evaluate(X_train, y_train, X_test, y_test, media="auto")`
-
-Atalho: treina e avalia em uma única chamada.
-
-```python
-df_resultados = auto.fit_evaluate(
-    X_train, y_train, X_test, y_test, media="macro"
-)
-```
-
-#### `fit_evaluate_cv(X, y, cv=5, media="auto", random_state_cv=42, shuffle=True)`
-
-Avaliação com validação cruzada estratificada.
-
-```python
-df_cv = auto.fit_evaluate_cv(
-    X, y,
-    cv=5,
-    media="macro",
-    random_state_cv=42,
-    shuffle=True,
-)
-```
-
-Retorna `DataFrame` com:
-
-* `<métrica>_mean`
-* `<métrica>_std`
-
-para cada modelo.
-
-#### `get_results()`
-
-Retorna o último `DataFrame` de resultados de hold-out.
-
-```python
-df_holdout = auto.get_results()
-```
-
-#### `get_results_cv()`
-
-Retorna o último `DataFrame` de resultados de cross-validation.
-
-```python
-df_cv = auto.get_results_cv()
-```
-
-#### `summarize_results(top_k=3)`
-
-Gera um resumo textual do desempenho dos modelos no hold-out.
-
-```python
-print(auto.summarize_results(top_k=3))
-```
-
-Exemplo de saída:
-
-```text
-Melhor modelo (segundo f1): GradientBoosting com f1 = 0.7692.
-
-Top modelos (hold-out):
-  1. GradientBoosting -> accuracy=0.8650, f1=0.7692, recall=0.7181, precision=0.8282, overall_rank=8.0
-  2. RandomForest -> ...
-  3. Bagging_RandomForestBase -> ...
-
-Diferença entre o 1º e o 2º em f1: 0.0065.
-```
+> Implementações de modelos padrão: `RandomForestClassifier`, `ExtraTreesClassifier`, `GradientBoostingClassifier`, `AdaBoostClassifier`, `BaggingClassifier(base_estimator=RandomForest)`.
 
 ---
 
-## 🛣️ Roadmap (Ideias Futuras)
+## Licença
 
-* ✅ Versão inicial para classificação com ensembles.
-* ⏳ `AutoEnsembleRegressor` (versão para regressão, com RMSE, MAE, R² etc.).
-* ⏳ Integração com XGBoost, LightGBM e CatBoost.
-* ⏳ Geração automática de relatório em Markdown / LaTeX para artigos.
-* ⏳ Plots automáticos (boxplots das métricas, barras com intervalos de confiança).
-* ⏳ Publicação no PyPI.
+Distribuído sob licença **MIT** — consulte o arquivo `LICENSE` para termos completos.
 
 ---
 
-## 🤝 Contribuindo
+## Sobre o autor
 
-Contribuições são bem-vindas:
+**Vinicius de Souza Santos**
+Pesquisador em Ciência da Computação (UNESP) — ênfase em Machine Learning, Feature Selection e experimentação empírica.
 
-1. Faça um fork do repositório.
-2. Crie uma branch para sua feature/fix:
+* **GitHub:** [https://github.com/ViniciusKanh](https://github.com/ViniciusKanh)
+* **LinkedIn:** [https://www.linkedin.com/in/vinicius-souza-santoss/](https://www.linkedin.com/in/vinicius-souza-santoss/)
+* **E-mail profissional:** [vinicius-souza.santos@unesp.br](mailto:vinicius-souza.santos@unesp.br)
 
-   ```bash
-   git checkout -b minha-feature
-   ```
-3. Faça commits claros.
-4. Abra um Pull Request explicando:
-
-   * o problema
-   * a solução adotada
-   * se possível, inclua exemplos/prints das métricas.
-
-Sugestões de contribuições:
-
-* Novos modelos no `model_zoo` (ensembles adicionais).
-* Testes unitários com `pytest`.
-* Melhorias no README / documentação.
-* Integração com mais tipos de datasets e exemplos.
+**Resumo das competências:** concepção e execução de benchmarks reprodutíveis, validação cruzada estratificada, experimentação empírica com scikit-learn, engenharia de pipelines de avaliação.
 
 ---
 
-## 📄 Licença
+## Changelog curto
 
-Este projeto é distribuído sob a licença **MIT**.
-Você é livre para usar, modificar e distribuir, desde que mantenha os créditos originais.
-
----
-
-## 👤 Autor – Sobre o Pesquisador
-
-### **Vinicius de Souza Santos**  
-**Pesquisador em Ciência da Computação – UNESP**  
-**Ênfase em Data Science, Machine Learning e Engenharia de Modelos**
-
-<p align="left">
-  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPGe7oWAt4D6YLkx8btAGVGFCecJa1oXFzAA&s" width="180" style="border-radius:12px;"/>
-</p>
+* **0.1.1** — Release inicial publicada no PyPI (funcionalidades básicas: treino/eval de ensembles, métricas, ranking, CV e persistência CSV).
 
 ---
 
-### 🧑‍🎓 Formação & Atuação
-- Mestrando em **Ciência da Computação** pela **UNESP**  
-- Pesquisador com foco em:
-  - Feature Selection  
-  - Benchmarking de modelos  
-  - Métodos Ensemble  
-  - Engenharia de Dados aplicada a Machine Learning  
-- Engenheiro de Computação em formação  
-- Experiência com Python, Scikit-Learn, Data Mining, Experimentação e validação de modelos
-
----
-
-### 🌐 Redes e Contato
-
-- **LinkedIn:**  
-  👉 https://www.linkedin.com/in/vinicius-souza-santoss/
-
-- **GitHub:**  
-  👉 https://github.com/ViniciusKanh
-
-- **E-mail acadêmico:**  
-  👉 vinicius-souza.santos@unesp.br
-
----
-
-### 💬 Nota do Autor
+### Notas finais
 
 Este projeto foi desenvolvido com a proposta de oferecer uma biblioteca simples, transparente e científica para benchmark automatizado de modelos ensemble, focando em reprodutibilidade, rigor estatístico e facilidade de uso para pesquisadores, estudantes e profissionais da área.
-
----
 
