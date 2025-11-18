@@ -1,0 +1,55 @@
+# .github/workflows/publish-github-package.yml
+name: Build and publish (attempt GitHub Packages, fallback to Release)
+
+on:
+  push:
+    tags:
+      - 'v*'            # dispara quando você pushar uma tag do tipo vX.Y.Z
+
+permissions:
+  contents: write      # necessário para criar/atualizar Releases
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install build dependencies
+        run: python -m pip install --upgrade pip build wheel twine
+
+      - name: Build distributions
+        run: python -m build
+        # gera dist/*.whl e dist/*.tar.gz
+
+      - name: Attempt publish to GitHub Packages (twine)
+        id: upload
+        env:
+          # AEB_TOKEN é o secret que você criou (setar em Settings -> Secrets)
+          TWINE_USERNAME: 'ViniciusKanh'
+          TWINE_PASSWORD: ${{ secrets.AEB_TOKEN }}
+        run: |
+          python -m twine upload --repository-url https://pypi.pkg.github.com/ViniciusKanh dist/* --verbose
+        continue-on-error: true
+        # não falha o job; o próximo passo decidirá se precisa criar Release
+
+      - name: Debug upload outcome (logs)
+        if: always()
+        run: |
+          echo "Upload outcome: ${{ steps.upload.outcome }}"
+          echo "Upload conclusion: ${{ steps.upload.conclusion }}"
+
+      - name: Create Release and attach dist/* (fallback if upload failed)
+        if: steps.upload.outcome != 'success'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
