@@ -51,8 +51,6 @@ Aplicações típicas: pesquisa acadêmica (benchmarks reprodutíveis), avaliaç
 pip install auto-ensemble-benchmark
 ```
 
-> Observação: a versão publicada atualmente é `0.1.1`. Use `pip install --upgrade auto-ensemble-benchmark` para atualizar.
-
 ### Modo desenvolvimento (instalação local)
 
 ```bash
@@ -264,12 +262,6 @@ Pesquisador em Ciência da Computação (UNESP) — ênfase em Machine Learning,
 * **E-mail profissional:** [vinicius-souza.santos@unesp.br](mailto:vinicius-souza.santos@unesp.br)
 
 **Resumo das competências:** concepção e execução de benchmarks reprodutíveis, validação cruzada estratificada, experimentação empírica com scikit-learn, engenharia de pipelines de avaliação.
-
----
-
-## Changelog curto
-
-* **0.1.1** — Release inicial publicada no PyPI (funcionalidades básicas: treino/eval de ensembles, métricas, ranking, CV e persistência CSV).
 
 ---
 
