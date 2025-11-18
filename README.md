@@ -125,7 +125,7 @@ df_cv = auto.fit_evaluate_cv(
 # df_cv contém <metrica>_mean e <metrica>_std para cada modelo
 print(df_cv)
 ```
-
+ 
 ### Uso avançado — sobrescrita de hiperparâmetros e salvamento automático
 
 ```python
