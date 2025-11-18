@@ -1,0 +1,25 @@
+# Ambientes virtuais
+.venv/
+venv/
+
+# Artefatos de build
+dist/
+build/
+*.egg-info/
+
+# Cache Python
+__pycache__/
+*.pyc
+
+# Configs locais
+.env
+.pypirc
+
+# IDEs
+.vscode/
+.idea/
+*.code-workspace
+
+# Arquivos do Windows / OneDrive
+Thumbs.db
+desktop.ini

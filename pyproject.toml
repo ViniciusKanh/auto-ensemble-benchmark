@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "auto-ensemble-benchmark"
+version = "0.1.0"
+description = "Benchmark automático de modelos ensemble com métricas, ranking e validação cruzada."
+readme = "README.md"
+authors = [
+  { name="Vinicius de Souza Santos", email="vinicius-souza.santos@unesp.br" },
+]
+license = { file="LICENSE" }
+requires-python = ">=3.9"
+keywords = ["machine learning", "benchmark", "ensemble", "data science", "classification"]
+
+dependencies = [
+    "numpy>=1.23.0",
+    "pandas>=1.5.0",
+    "scikit-learn>=1.2.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/ViniciusKanh/auto-ensemble-benchmark"
+Repository = "https://github.com/ViniciusKanh/auto-ensemble-benchmark"
+Issues = "https://github.com/ViniciusKanh/auto-ensemble-benchmark/issues"
