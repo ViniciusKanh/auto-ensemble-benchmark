@@ -536,12 +536,6 @@ Você é livre para usar, modificar e distribuir, desde que mantenha os crédito
 
 ---
 
-Claro — segue um tópico profissional, elegante, acadêmico e bem-estruturado com **créditos completos**, **cartão profissional**, **foto**, **links**, mantendo o estilo formal e técnico do restante do README.
-
-Você só precisa **copiar e colar no final do seu README**:
-
----
-
 ## 👤 Autor – Sobre o Pesquisador
 
 ### **Vinicius de Souza Santos**  
